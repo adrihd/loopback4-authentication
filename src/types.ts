@@ -16,6 +16,8 @@ export interface IAuthUser {
   id?: number | string;
   username: string;
   password?: string;
+  company?: string;
+  token?: string;
 }
 
 export interface AuthenticationMetadata {
