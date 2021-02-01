@@ -2,7 +2,7 @@ import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
 const config = {
-  name: 'AuthUser',
+  name: 'Auth',
   connector: 'mongodb',
   url: process.env.MONGODB_URI,
   useNewUrlParser: true,
