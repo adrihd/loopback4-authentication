@@ -45,7 +45,7 @@
     "!*/__tests__"
   ],
   "peerDependencies": {
-    "@loopback/boot": "^2.1.2",
+    "@loopback/boot": "^3.2.0",
     "@loopback/rest": "^3.3.2"
   },
   "dependencies": {
