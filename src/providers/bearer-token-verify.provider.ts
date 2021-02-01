@@ -1,6 +1,6 @@
 import {Provider} from '@loopback/context';
 import {repository} from '@loopback/repository';
-import {VerifyFunction} from '../';
+import {VerifyFunction} from '..';
 import {User} from '../models';
 import {UserRepository} from '../repositories';
 
