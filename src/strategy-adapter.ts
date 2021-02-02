@@ -59,11 +59,11 @@ export class StrategyAdapter<T> {
         reject(new HttpErrors.Unauthorized(error));
       };
 
-      strategy.redirect = (url: string) => {
+      strategy.redirect = (url: string, t: T) => {
         if (response) {
           response.redirect(url, 302);
         }
-        resolve();
+        resolve(t);
       };
 
       // authenticate
