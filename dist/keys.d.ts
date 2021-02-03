@@ -1,6 +1,7 @@
 import { BindingKey } from '@loopback/context';
 import { MetadataAccessor } from '@loopback/metadata';
 import { Strategy } from 'passport';
+import { UserRepository } from './repositories';
 import { AuthenticateFn, AuthenticationMetadata, IAuthClient, IAuthUser } from './types';
 export * from './strategies/keys';
 /**
@@ -14,6 +15,7 @@ export declare namespace AuthenticationBindings {
     const USER_METADATA: BindingKey<AuthenticationMetadata | undefined>;
     const CLIENT_METADATA: BindingKey<AuthenticationMetadata | undefined>;
     const CURRENT_USER: BindingKey<IAuthUser | undefined>;
+    const USER_REPO: BindingKey<UserRepository | undefined>;
     const CURRENT_CLIENT: BindingKey<IAuthClient | undefined>;
 }
 export declare const USER_AUTHENTICATION_METADATA_KEY: MetadataAccessor<AuthenticationMetadata, MethodDecorator>;

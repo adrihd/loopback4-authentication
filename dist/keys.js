@@ -17,6 +17,7 @@ var AuthenticationBindings;
     AuthenticationBindings.USER_METADATA = context_1.BindingKey.create('sf.userAuthentication.operationMetadata');
     AuthenticationBindings.CLIENT_METADATA = context_1.BindingKey.create('sf.clientAuthentication.operationMetadata');
     AuthenticationBindings.CURRENT_USER = context_1.BindingKey.create('sf.userAuthentication.currentUser');
+    AuthenticationBindings.USER_REPO = context_1.BindingKey.create('sf.userAuthentication.userRepo');
     AuthenticationBindings.CURRENT_CLIENT = context_1.BindingKey.create('sf.clientAuthentication.currentClient');
 })(AuthenticationBindings = exports.AuthenticationBindings || (exports.AuthenticationBindings = {}));
 exports.USER_AUTHENTICATION_METADATA_KEY = metadata_1.MetadataAccessor.create('userAuthentication.operationsMetadata');

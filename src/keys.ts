@@ -1,6 +1,7 @@
 import {BindingKey} from '@loopback/context';
 import {MetadataAccessor} from '@loopback/metadata';
 import {Strategy} from 'passport';
+import {UserRepository} from './repositories';
 
 import {
   AuthenticateFn,
@@ -41,6 +42,10 @@ export namespace AuthenticationBindings {
 
   export const CURRENT_USER = BindingKey.create<IAuthUser | undefined>(
     'sf.userAuthentication.currentUser',
+  );
+
+  export const USER_REPO = BindingKey.create<UserRepository | undefined>(
+    'sf.userAuthentication.userRepo',
   );
 
   export const CURRENT_CLIENT = BindingKey.create<IAuthClient | undefined>(
