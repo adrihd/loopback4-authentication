@@ -1,6 +1,7 @@
 import {Provider} from '@loopback/context';
 import {repository} from '@loopback/repository';
-import {VerifyFunction} from '..';
+import {HttpErrors} from '@loopback/rest';
+import {AuthErrorKeys, VerifyFunction} from '..';
 import {User} from '../models';
 import {UserRepository} from '../repositories';
 
@@ -18,7 +19,11 @@ export class BearerTokenVerifyProvider
           token: token,
         },
       })) as User;
-      return user;
+      if (!user) {
+        throw new HttpErrors.Unauthorized(AuthErrorKeys.TokenInvalid);
+      } else {
+        return user;
+      }
     };
   }
 }
