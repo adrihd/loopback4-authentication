@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BearerTokenVerifyProvider = void 0;
 const tslib_1 = require("tslib");
 const repository_1 = require("@loopback/repository");
-const rest_1 = require("@loopback/rest");
 const repositories_1 = require("../repositories");
 let BearerTokenVerifyProvider = class BearerTokenVerifyProvider {
     constructor(userRepository) {
@@ -11,23 +10,12 @@ let BearerTokenVerifyProvider = class BearerTokenVerifyProvider {
     }
     value() {
         return async (token) => {
-            try {
-                const user = (await this.userRepository.findOne({
-                    where: {
-                        token: token,
-                    },
-                }));
-                if (!user) {
-                    throw new rest_1.HttpErrors.Unauthorized("Token Invalid" /* TokenInvalid */);
-                }
-                else {
-                    return user;
-                }
-            }
-            catch (error) {
-                error.statusCode = 401;
-                throw error;
-            }
+            const user = (await this.userRepository.findOne({
+                where: {
+                    token: token,
+                },
+            }));
+            return user;
         };
     }
 };
