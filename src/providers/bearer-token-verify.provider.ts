@@ -1,7 +1,6 @@
 import {Provider} from '@loopback/context';
 import {repository} from '@loopback/repository';
-import {HttpErrors} from '@loopback/rest';
-import {AuthErrorKeys, VerifyFunction} from '..';
+import {VerifyFunction} from '..';
 import {User} from '../models';
 import {UserRepository} from '../repositories';
 
@@ -14,21 +13,13 @@ export class BearerTokenVerifyProvider
 
   value(): VerifyFunction.BearerFn {
     return async (token) => {
-      try {
-        const user = (await this.userRepository.findOne({
-          where: {
-            token: token,
-          },
-        })) as User;
-        if (!user) {
-          throw new HttpErrors.Unauthorized(AuthErrorKeys.TokenInvalid);
-        } else {
-          return user;
-        }
-      } catch (error) {
-        error.statusCode = 401;
-        throw error;
-      }
+      const user = (await this.userRepository.findOne({
+        where: {
+          token: token,
+        },
+      })) as User;
+
+      return user;
     };
   }
 }
