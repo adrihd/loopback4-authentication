@@ -14,15 +14,20 @@ export class BearerTokenVerifyProvider
 
   value(): VerifyFunction.BearerFn {
     return async (token) => {
-      const user = (await this.userRepository.findOne({
-        where: {
-          token: token,
-        },
-      })) as User;
-      if (!user) {
-        throw new HttpErrors.Unauthorized(AuthErrorKeys.TokenInvalid);
-      } else {
-        return user;
+      try {
+        const user = (await this.userRepository.findOne({
+          where: {
+            token: token,
+          },
+        })) as User;
+        if (!user) {
+          throw new HttpErrors.Unauthorized(AuthErrorKeys.TokenInvalid);
+        } else {
+          return user;
+        }
+      } catch (error) {
+        error.statusCode = 401;
+        throw error;
       }
     };
   }
