@@ -11,24 +11,16 @@ let BearerTokenVerifyProvider = class BearerTokenVerifyProvider {
     }
     value() {
         return async (token) => {
-            try {
-                console.log('adsasassasalllll---', token);
-                const user = (await this.userRepository.findOne({
-                    where: {
-                        token: token,
-                    },
-                }));
-                console.log(user);
-                if (!user) {
-                    throw new rest_1.HttpErrors.Unauthorized("Token Invalid" /* TokenInvalid */);
-                }
-                else {
-                    return user;
-                }
+            const user = (await this.userRepository.findOne({
+                where: {
+                    token: token,
+                },
+            }));
+            if (!user) {
+                throw new rest_1.HttpErrors.Unauthorized("Token Invalid" /* TokenInvalid */);
             }
-            catch (error) {
-                console.log('ewwewwewew', error);
-                throw new rest_1.HttpErrors.Unauthorized(error.message);
+            else {
+                return user;
             }
         };
     }
