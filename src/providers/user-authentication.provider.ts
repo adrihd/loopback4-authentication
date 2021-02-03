@@ -1,5 +1,12 @@
-import {Getter, inject, Provider, Setter} from '@loopback/context';
-import {HttpErrors, Request, Response} from '@loopback/rest';
+import {Getter, inject, injectable, Provider, Setter} from '@loopback/context';
+import {
+  asMiddleware,
+  HttpErrors,
+  Middleware,
+  Request,
+  Response,
+  RestMiddlewareGroups,
+} from '@loopback/rest';
 import {Strategy} from 'passport';
 
 import {AuthErrorKeys} from '../error-keys';
@@ -51,5 +58,30 @@ export class AuthenticateActionProvider
     );
     this.setCurrentUser(user);
     return user;
+  }
+}
+
+@injectable(
+  asMiddleware({
+    group: RestMiddlewareGroups.AUTHENTICATION,
+    upstreamGroups: [RestMiddlewareGroups.FIND_ROUTE],
+  }),
+)
+export class AuthenticationMiddlewareProvider implements Provider<Middleware> {
+  constructor(
+    @inject(AuthenticationBindings.USER_AUTH_ACTION.key)
+    private authenticate: AuthenticateFn<IAuthUser | undefined>,
+  ) {}
+
+  value(): Middleware {
+    return async (ctx, next) => {
+      try {
+        await this.authenticate(ctx.request);
+      } catch (error) {
+        error.statusCode = 401;
+        throw error;
+      }
+      return next();
+    };
   }
 }

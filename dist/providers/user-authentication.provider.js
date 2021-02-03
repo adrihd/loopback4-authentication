@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthenticateActionProvider = void 0;
+exports.AuthenticationMiddlewareProvider = exports.AuthenticateActionProvider = void 0;
 const tslib_1 = require("tslib");
 const context_1 = require("@loopback/context");
 const rest_1 = require("@loopback/rest");
@@ -45,4 +45,30 @@ AuthenticateActionProvider = tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [Function, Function, Function])
 ], AuthenticateActionProvider);
 exports.AuthenticateActionProvider = AuthenticateActionProvider;
+let AuthenticationMiddlewareProvider = class AuthenticationMiddlewareProvider {
+    constructor(authenticate) {
+        this.authenticate = authenticate;
+    }
+    value() {
+        return async (ctx, next) => {
+            try {
+                await this.authenticate(ctx.request);
+            }
+            catch (error) {
+                error.statusCode = 401;
+                throw error;
+            }
+            return next();
+        };
+    }
+};
+AuthenticationMiddlewareProvider = tslib_1.__decorate([
+    context_1.injectable(rest_1.asMiddleware({
+        group: rest_1.RestMiddlewareGroups.AUTHENTICATION,
+        upstreamGroups: [rest_1.RestMiddlewareGroups.FIND_ROUTE],
+    })),
+    tslib_1.__param(0, context_1.inject(keys_1.AuthenticationBindings.USER_AUTH_ACTION.key)),
+    tslib_1.__metadata("design:paramtypes", [Function])
+], AuthenticationMiddlewareProvider);
+exports.AuthenticationMiddlewareProvider = AuthenticationMiddlewareProvider;
 //# sourceMappingURL=user-authentication.provider.js.map

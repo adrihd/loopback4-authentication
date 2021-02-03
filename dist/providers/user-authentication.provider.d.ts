@@ -1,6 +1,6 @@
 /// <reference types="express" />
 import { Getter, Provider, Setter } from '@loopback/context';
-import { Request, Response } from '@loopback/rest';
+import { Middleware, Request, Response } from '@loopback/rest';
 import { Strategy } from 'passport';
 import { AuthenticateFn, IAuthUser, AuthenticationMetadata } from '../types';
 export declare class AuthenticateActionProvider implements Provider<AuthenticateFn<IAuthUser | undefined>> {
@@ -10,4 +10,9 @@ export declare class AuthenticateActionProvider implements Provider<Authenticate
     constructor(getStrategy: Getter<Strategy>, getMetadata: Getter<AuthenticationMetadata>, setCurrentUser: Setter<IAuthUser | undefined>);
     value(): AuthenticateFn<IAuthUser | undefined>;
     action(request: Request, response?: Response): Promise<IAuthUser | undefined>;
+}
+export declare class AuthenticationMiddlewareProvider implements Provider<Middleware> {
+    private authenticate;
+    constructor(authenticate: AuthenticateFn<IAuthUser | undefined>);
+    value(): Middleware;
 }
