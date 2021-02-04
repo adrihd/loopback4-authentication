@@ -30,7 +30,7 @@ You can use one or more strategies of the above in your application. For each of
 ## Install
 
 ```sh
-npm install loopback4-authentication
+npm install git+https://github.com:samuelpzbp/loopback4-authentication.git
 ```
 
 ## Quick Starter
@@ -39,7 +39,23 @@ For a quick starter guide, you can refer to our [loopback 4 starter](https://git
 
 ## Detailed Usage
 
-The first and common step for all of the startegies is to add the component to the application. See below
+The first and common step for all of the startegies is to add the component and required bindings to the application. See below
+
+> Please note that the http-bearer middleware strategy has already been implemented in the plugin, you only need to bind the provider. And you also do not need to implement anything in the sequence anymore, because the Loopback4 Middleware Sequence has been implemented
+
+Add the following imports required for bindings and initializations in application.ts
+
+```ts
+import {AuthenticationComponent, Strategies} from 'loopback4-authentication';
+import {MongodbDataSource} from 'loopback4-authentication/dist/datasources';
+import {
+  AuthenticationMiddlewareProvider,
+  BearerTokenVerifyProvider,
+} from 'loopback4-authentication/dist/providers/index';
+import {UserRepository} from 'loopback4-authentication/dist/repositories';
+```
+
+Now add all the required bindings to the application.ts in the order specified below.
 
 ```ts
 // application.ts
@@ -49,21 +65,97 @@ export class ToDoApplication extends BootMixin(
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
+    // ***Set up the Authentication Middleware
+    this.middleware(AuthenticationMiddlewareProvider);
+
     // Set up the custom sequence
     this.sequence(MySequence);
 
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
 
-    // Add authentication component
+    // ***Add authentication component
     this.component(AuthenticationComponent);
+
+    // ***Add the auth plugin's DB datasource binding
+    this.bind('datasources.Mongodb').toClass(MongodbDataSource);
+
+    // ***Add the auth plugin's User Repository binding
+    this.bind('repositories.UserRepository').toClass(UserRepository);
+
+    // ***Customize authentication verify handlers
+    this.bind(Strategies.Passport.BEARER_TOKEN_VERIFIER).toProvider(
+      BearerTokenVerifyProvider,
+    );
 
     // .... Rest of the code below
   }
 }
 ```
 
+As you have noticed above, The `BearerTokenVerifyProvider` provider has already been integrated in this plugin so far.
+
 Once this is done, you are ready to configure any of the available strategy in the application.
+
+Like this:
+
+After this, you can use decorator to apply auth to controller functions wherever needed. See below.
+
+```ts
+/**
+ * A simple controller to bounce back http requests
+ */
+export class PingController {
+  constructor(
+    @inject(RestBindings.Http.REQUEST) private req: Request,
+    // This will give access to the current user record object
+    @inject(AuthenticationBindings.CURRENT_USER)
+    private readonly user: IAuthUser | undefined,
+  ) {}
+
+  // Map to `GET /ping`
+  @get('/ping')
+  @response(200, PING_RESPONSE)
+  @authenticate(STRATEGY.BEARER) // Implement auth decorator here
+  ping(): object {
+    // Reply with a greeting, the current time, the url, and request headers
+    return {
+      greeting: `Hello from Payzone uSMart DCC Adapter/API`,
+      currentUser: [this.user?.company, this.user?.username]
+        .filter(function (el) {
+          return [null, '', undefined].indexOf(el) <= -1;
+        })
+        .join(' '),
+      date: new Date(),
+      url: this.req.url,
+      requestIp: this.req.ip,
+      headers: Object.assign({}, this.req.headers),
+    };
+  }
+}
+```
+
+### Bonus
+
+You can add security config to your OpenAPI spec, like this:
+
+```ts
+components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+        },
+      },
+    },
+    security: [{bearerAuth: []}],
+```
+
+### See implementation in the Payzone uSmart DCC Adapter repo
+
+---
+
+## Only the http-bearer provider has been integrated into this plugin. For other strategies please see below:
 
 ### Oauth2-client-password
 
@@ -228,66 +320,6 @@ For accessing the authenticated AuthClient model reference, you can inject the C
 
 ### Http-bearer
 
-First, create a AuthUser model implementing the IAuthUser interface. You can implement the interface in the user model itself. See sample below.
-
-```ts
-@model({
-  name: 'users',
-})
-export class User extends Entity implements IAuthUser {
-  @property({
-    type: 'number',
-    id: true,
-  })
-  id?: number;
-
-  @property({
-    type: 'string',
-    required: true,
-    name: 'first_name',
-  })
-  firstName: string;
-
-  @property({
-    type: 'string',
-    name: 'last_name',
-  })
-  lastName: string;
-
-  @property({
-    type: 'string',
-    name: 'middle_name',
-  })
-  middleName?: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  username: string;
-
-  @property({
-    type: 'string',
-  })
-  email?: string;
-
-  @property({
-    type: 'string',
-  })
-  password?: string;
-
-  constructor(data?: Partial<User>) {
-    super(data);
-  }
-}
-```
-
-Create CRUD repository for the above model. Use loopback CLI.
-
-```sh
-lb4 repository
-```
-
 Add the verifier function for the strategy. You need to create a provider for the same. You can add your application specific business logic for client auth here. Here is simple example for JWT tokens.
 
 ```ts
@@ -298,7 +330,7 @@ import {VerifyFunction} from 'loopback4-authentication';
 
 import {User} from '../models/user.model';
 
-export class BearerTokenVerifyProvider
+export class JwtBearerTokenVerifyProvider
   implements Provider<VerifyFunction.BearerFn> {
   constructor(
     @repository(RevokedTokenRepository)
@@ -306,7 +338,7 @@ export class BearerTokenVerifyProvider
   ) {}
 
   value(): VerifyFunction.BearerFn {
-    return async token => {
+    return async (token) => {
       const user = verify(token, process.env.JWT_SECRET as string, {
         issuer: process.env.JWT_ISSUER,
       }) as User;
@@ -329,7 +361,7 @@ import {AuthenticationComponent, Strategies} from 'loopback4-authentication';
 this.component(AuthenticationComponent);
 // Customize authentication verify handlers
 this.bind(Strategies.Passport.BEARER_TOKEN_VERIFIER).toProvider(
-  BearerTokenVerifyProvider,
+  JwtBearerTokenVerifyProvider,
 );
 ```
 
