@@ -1,9 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 import {IAuthUser} from '../types';
 
-@model({
-  name: 'users',
-})
+@model({settings: {}})
 export class User extends Entity implements IAuthUser {
   @property({
     type: 'number',
@@ -13,16 +11,15 @@ export class User extends Entity implements IAuthUser {
 
   @property({
     type: 'string',
-    required: true,
     name: 'first_name',
   })
-  firstName: string;
+  firstName?: string;
 
   @property({
     type: 'string',
     name: 'last_name',
   })
-  lastName: string;
+  lastName?: string;
 
   @property({
     type: 'string',
@@ -32,9 +29,8 @@ export class User extends Entity implements IAuthUser {
 
   @property({
     type: 'string',
-    required: true,
   })
-  username: string;
+  username?: string;
 
   @property({
     type: 'string',

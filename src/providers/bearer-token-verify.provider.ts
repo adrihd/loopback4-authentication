@@ -18,7 +18,6 @@ export class BearerTokenVerifyProvider
           token: token,
         },
       })) as User;
-
       return user;
     };
   }

@@ -6,11 +6,7 @@ const config = {
   connector: 'mongodb',
   url: process.env.MONGODB_URI,
   useNewUrlParser: true,
-  // host: 'localhost',
-  // port: 27017,
-  // user: '',
-  // password: '',
-  // database: 'dcc_adapter',
+  useUnifiedTopology: true,
 };
 
 // Observe application's life cycle to disconnect the datasource when

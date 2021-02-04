@@ -18,7 +18,6 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     repository_1.property({
         type: 'string',
-        required: true,
         name: 'first_name',
     }),
     tslib_1.__metadata("design:type", String)
@@ -40,7 +39,6 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     repository_1.property({
         type: 'string',
-        required: true,
     }),
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "username", void 0);
@@ -70,9 +68,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "token", void 0);
 User = tslib_1.__decorate([
-    repository_1.model({
-        name: 'users',
-    }),
+    repository_1.model({ settings: {} }),
     tslib_1.__metadata("design:paramtypes", [Object])
 ], User);
 exports.User = User;

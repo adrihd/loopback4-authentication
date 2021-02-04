@@ -54,12 +54,12 @@ let BearerStrategyFactoryProvider = class BearerStrategyFactoryProvider {
                 try {
                     const user = await this.verifierBearer(token);
                     if (!user) {
-                        throw new rest_1.HttpErrors.Unauthorized("Invalid Credentials" /* InvalidCredentials */);
+                        throw new rest_1.HttpErrors.Unauthorized("Token Invalid" /* TokenInvalid */);
                     }
                     cb(null, user);
                 }
                 catch (err) {
-                    cb(err);
+                    cb(err.message);
                 }
             });
         }

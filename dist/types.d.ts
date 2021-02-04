@@ -8,7 +8,7 @@ export interface IAuthClient {
 }
 export interface IAuthUser {
     id?: number | string;
-    username: string;
+    username?: string;
     password?: string;
     company?: string;
     token?: string;

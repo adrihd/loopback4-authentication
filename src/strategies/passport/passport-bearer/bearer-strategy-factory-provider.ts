@@ -76,13 +76,11 @@ export class BearerStrategyFactoryProvider
           try {
             const user = await this.verifierBearer(token);
             if (!user) {
-              throw new HttpErrors.Unauthorized(
-                AuthErrorKeys.InvalidCredentials,
-              );
+              throw new HttpErrors.Unauthorized(AuthErrorKeys.TokenInvalid);
             }
             cb(null, user);
           } catch (err) {
-            cb(err);
+            cb(err.message);
           }
         },
       );
