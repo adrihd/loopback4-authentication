@@ -7,7 +7,7 @@ export declare class MongodbDataSource extends juggler.DataSource implements Lif
         connector: string;
         url: string | undefined;
         useNewUrlParser: boolean;
-        useUnifiedTopology: boolean;
+        database: string;
     };
     constructor(dsConfig?: object);
 }

@@ -1,4 +1,5 @@
 "use strict";
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MongodbDataSource = void 0;
 const tslib_1 = require("tslib");
@@ -9,7 +10,7 @@ const config = {
     connector: 'mongodb',
     url: process.env.MONGODB_URI,
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    database: (_a = process.env.MONGODB_DB) !== null && _a !== void 0 ? _a : '',
 };
 // Observe application's life cycle to disconnect the datasource when
 // application is stopped. This allows the application to be shut down
