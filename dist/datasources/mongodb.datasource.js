@@ -1,5 +1,4 @@
 "use strict";
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MongodbDataSource = void 0;
 const tslib_1 = require("tslib");
@@ -8,16 +7,18 @@ const repository_1 = require("@loopback/repository");
 const config = {
     name: 'Mongodb',
     connector: 'mongodb',
-    url: process.env.MONGODB_URI,
+    url: '',
     useNewUrlParser: true,
-    database: (_a = process.env.MONGODB_DB) !== null && _a !== void 0 ? _a : '',
 };
 // Observe application's life cycle to disconnect the datasource when
 // application is stopped. This allows the application to be shut down
 // gracefully. The `stop()` method is inherited from `juggler.DataSource`.
 // Learn more at https://loopback.io/doc/en/lb4/Life-cycle.html
 let MongodbDataSource = class MongodbDataSource extends repository_1.juggler.DataSource {
-    constructor(dsConfig = config) {
+    constructor(dsConfig) {
+        var _a;
+        config.url = (_a = process.env.MONGODB_URI) !== null && _a !== void 0 ? _a : '';
+        dsConfig = config;
         super(dsConfig);
     }
 };

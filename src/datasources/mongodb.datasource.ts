@@ -4,9 +4,8 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'Mongodb',
   connector: 'mongodb',
-  url: process.env.MONGODB_URI,
+  url: '',
   useNewUrlParser: true,
-  database: process.env.MONGODB_DB ?? '',
 };
 
 // Observe application's life cycle to disconnect the datasource when
@@ -22,8 +21,10 @@ export class MongodbDataSource
 
   constructor(
     @inject('datasources.config.Mongodb', {optional: true})
-    dsConfig: object = config,
+    dsConfig: object,
   ) {
+    config.url = process.env.MONGODB_URI ?? '';
+    dsConfig = config;
     super(dsConfig);
   }
 }

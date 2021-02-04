@@ -5,9 +5,8 @@ export declare class MongodbDataSource extends juggler.DataSource implements Lif
     static readonly defaultConfig: {
         name: string;
         connector: string;
-        url: string | undefined;
+        url: string;
         useNewUrlParser: boolean;
-        database: string;
     };
-    constructor(dsConfig?: object);
+    constructor(dsConfig: object);
 }
